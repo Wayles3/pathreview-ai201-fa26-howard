@@ -23,4 +23,4 @@ The `GET /health` endpoint in `api/routes/health.py` checks that PostgreSQL is r
 
 **Setup confirmation:** [x] App runs locally at localhost:5173 (frontend returns 200; backend on :8000). I also reproduced the bug live: `GET /health` returns 503 and the log shows `Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')`.
 
-**Cohort ledger:** [ ] Issue added to cohort ledger
+**Cohort ledger:** [x] Issue added to cohort ledger
