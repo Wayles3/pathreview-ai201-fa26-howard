@@ -27,12 +27,12 @@ The `GET /health` endpoint in `api/routes/health.py` checks that PostgreSQL is r
 
 ## Unit 8 — Reproduction & solution planning
 
-**Reproduction commit link:** REPRO_COMMIT_URL
+**Reproduction commit link:** https://github.com/Wayles3/pathreview-ai201-fa26-howard/commit/00d0ba05a59779a37aa94d5a207a9a67d38040bc
 
 **Reproduction summary:**
 With the stack running, `curl -i localhost:8000/health` returns `503` with `"postgres":"unhealthy"` even though the Docker Postgres container is up; the log shows `postgres_health_check_failed` caused by raw `"SELECT 1"` being rejected by SQLAlchemy 2.x (`ObjectNotExecutableError: Not an executable object: 'SELECT 1'` on a bare connection, `ArgumentError: Textual SQL expression ... text('SELECT 1')` on a session). I also committed `tests/unit/test_health.py`, an `xfail(strict=True)` test using a fake session that rejects bare strings, so the bug is pinned in the suite until it is fixed.
 
-**PLAN.md link:** PLAN_URL
+**PLAN.md link:** https://github.com/Wayles3/pathreview-ai201-fa26-howard/blob/fix/61-health-check-sql-text/PLAN.md
 
 **Walkthrough video (recommended):** not recorded
 
