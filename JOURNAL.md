@@ -24,3 +24,17 @@ The `GET /health` endpoint in `api/routes/health.py` checks that PostgreSQL is r
 **Setup confirmation:** [x] App runs locally at localhost:5173 (frontend returns 200; backend on :8000). I also reproduced the bug live: `GET /health` returns 503 and the log shows `Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')`.
 
 **Cohort ledger:** [x] Issue added to cohort ledger
+
+## Unit 8 — Reproduction & solution planning
+
+**Reproduction commit link:** REPRO_COMMIT_URL
+
+**Reproduction summary:**
+With the stack running, `curl -i localhost:8000/health` returns `503` with `"postgres":"unhealthy"` even though the Docker Postgres container is up; the log shows `postgres_health_check_failed` caused by raw `"SELECT 1"` being rejected by SQLAlchemy 2.x (`ObjectNotExecutableError: Not an executable object: 'SELECT 1'` on a bare connection, `ArgumentError: Textual SQL expression ... text('SELECT 1')` on a session). I also committed `tests/unit/test_health.py`, an `xfail(strict=True)` test using a fake session that rejects bare strings, so the bug is pinned in the suite until it is fixed.
+
+**PLAN.md link:** PLAN_URL
+
+**Walkthrough video (recommended):** not recorded
+
+**Blockers or open questions:**
+After my fix `/health` will still return 503 because Redis is also reported unhealthy (issue #62, `settings.redis_host`). I need to verify my fix via `dependencies.postgres` rather than the status code, and confirm with the course team that #62 stays a separate issue.
