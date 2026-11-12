@@ -3,6 +3,8 @@
 **Issue:** Health check DB probe passes a raw SQL string, which fails under SQLAlchemy 2.x — https://github.com/codepath/pathreview-ai201-fa26-howard/issues/61
 
 ### Understand
+**In short:** I'm fixing the `/health` endpoint so it reports Postgres as healthy when the database is actually reachable, instead of always reporting it as down.
+
 **Root cause.** `health_check()` in `api/routes/health.py` (line ~32) runs `await db.execute("SELECT 1")`. SQLAlchemy 2.x (`pyproject.toml` pins `sqlalchemy>=2.0.0`) no longer coerces plain strings into executable SQL; they must be wrapped in `sqlalchemy.text()`. The call raises (`ArgumentError: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')` on a session; `ObjectNotExecutableError` on a bare connection, which I saw when reproducing). The surrounding `except Exception` swallows it, so the probe always marks Postgres unhealthy.
 
 **Expected:** with Postgres reachable, `dependencies.postgres == "healthy"`; unhealthy only when the DB is actually down.
